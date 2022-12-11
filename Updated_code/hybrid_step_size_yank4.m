@@ -52,12 +52,19 @@
 
 % Example usage: [AllResults, YankResults] = hybrid_step_size_yank4('10mer0mg', 5:9, [790 880], 1, 1, 1, 0, 0, 5, 20)
 
-function [AllResults, YankResults] = hybrid_step_size_yank4(probe, DSetsToAnalyze, beaddiameters, overview, fluor_plots, removeyankoffsets, step_find, step_plots, desired_trap_bw, avplotfact)
+function [AllResults, YankResults] = hybrid_step_size_yank4(probe, DSetsToAnalyze, bd, overview, fluor_plots, removeyankoffsets, step_find, step_plots, desired_trap_bw, avplotfact)
 
 tic
-datadirectories = '..\test_data\';
-analysisPath = '..\Power_spectra\';
-SaveFigDir = '..\test_data\';
+
+global datadirectories
+global beaddiameters
+global analysisPath
+
+parent_directory = dir('..\');
+datadirectories = [parent_directory(1).folder '\testing\'];
+analysisPath = [parent_directory(1).folder '\Power_spectra\'];
+beaddiameters = bd;
+SaveFigDir = datadirectories;
 
 %% Choose dataset. Metadata is associated with each file in the function hybridDataFile3.
 assignin('base', 'probe', probe)
@@ -142,12 +149,12 @@ for ii = DSetsToAnalyze
     calfilename = ['cal' calrootfile(1:(end-4))];
     
     % If the calibration is already in memory, don't have to redo
-    if ~exist(calfilename, 'var') % Then do calibration
+    basevars = evalin('base','whos');
+    if ~ismember(calfilename, {basevars(:).name}) % Then do calibration
         CalibrateStrippedWrapper(Date, calrootfile, 0, 0);
     end
     cal = evalin('base', calfilename);
-    evalin('base','clear([''fit'' calrootfile(1:(end-4))])') % Clear out this (unused) structure variable to save memory.
-    
+
     cal.kappaA = cal.kappaAX;
     cal.kappaB = cal.kappaBX;
     cal.alphaA = cal.alphaAX;
