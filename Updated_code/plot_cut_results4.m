@@ -10,10 +10,7 @@
 % variables to either 0 or 1.
 
 % Plot results of hybrid step size analysis
-SaveFigDir = 'C:\Users\Kevin\Documents\UHR_Fleezer_Data\Oligo_data'; % on laptop
-if isdir([SaveFigDir '\' probe])
-    SaveFigDir = [SaveFigDir '\' probe];
-end
+SaveFigDir = '..\test_data\';
 
 todaysDate = datestr(now,'yymmdd');
 FigSize = [25   49  900     600];
@@ -445,6 +442,11 @@ if ~isempty(Data_Binding) && plot_onrate
         'pN Oligo unbound state lifetimes'], 'FileName', [SaveName, 't_ub'])
     hold on
     box on
+    xlim([0 max(onlife)+binsize])
+    xlabel('t_{ub} (s)')
+    ylabel('Survival probability')
+    title([probe ' unbound lifetimes at ' num2str(meanT(Tset),'%0.2f') ' pN'])
+    set(gca,'YTick', 0:0.2:1)
     
     iqbon = iqr(t_ub); % Interquartile range for exponential distribution
     binsize = 2*iqr(t_ub)*length(t_ub)^(-1/3); % Freedman-Diaconis rule for determining optimal bin sizes.

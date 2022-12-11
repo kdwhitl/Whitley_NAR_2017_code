@@ -2,9 +2,9 @@
 % Date created: 100114 (yymmdd)
 % Date last modified: 221211 by Kevin Whitley
 
-% This script loads data from the ultrahigh-resolution fleezers from Chemla
-% lab (U of Illinois) containing fluorescence and optical trap data, finds
-% steps in the traces, and measures various things like lifetime and
+% This function loads data from the ultrahigh-resolution fleezers from
+% Chemla lab (U of Illinois) containing fluorescence and optical trap data,
+% finds steps in the traces, and measures various things like lifetime and
 % extension change.
 
 % Data is read in from the associated function hybridDataFile3, which
@@ -50,27 +50,20 @@
 % fluorescence intensity feedback setpoint used during acquisition,
 % is this step associated with a labeled oligo?]
 
+% Example usage: [AllResults, YankResults] = hybrid_step_size_yank4('10mer0mg', 5:9, [790 880], 1, 1, 1, 0, 0, 5, 20)
+
+function [AllResults, YankResults] = hybrid_step_size_yank4(probe, DSetsToAnalyze, beaddiameters, overview, fluor_plots, removeyankoffsets, step_find, step_plots, desired_trap_bw, avplotfact)
+
 tic
-global datadirectories
-global beaddiameters
-SaveFigDir = 'C:\Users\Kevin\Documents\UHR_Fleezer_Data\Oligo_data\';
+datadirectories = '..\test_data\';
+analysisPath = '..\Power_spectra\';
+SaveFigDir = '..\test_data\';
 
 %% Choose dataset. Metadata is associated with each file in the function hybridDataFile3.
-probe = '10mer0mg';
 assignin('base', 'probe', probe)
 DataSets = hybridDataFile3(probe);
 
 %% Initialize
-
-DSetsToAnalyze = 5:9; % Choose which files from this dataset to analyze.
-
-overview = 1; % plot raw fluorescence, extension, force (no analysis)
-fluor_plots = 1; % plot fluorescence, with or without analysis
-removeyankoffsets = 1; % remove trap offset specifically at the force the event occurred with
-
-% Use t test for step finding
-step_find = 0; % Use T test to find events from trap trace. Also, disables finding steps via fluorescence.
-step_plots = 0; % Plot step-finding
 
 % Initialize structure variables
 AllResults.binding = [];
@@ -78,11 +71,8 @@ AllResults.unbinding = [];
 AllResults.lifetimes = [];
 YankResults = [];
 
-desired_trap_bw = 5; % [Hz] bandwidth you want to downsample trap data to for data analysis. APD will be averaged to match.
-
 XAODCal = 123; % [nm/MHz] conversion from AOM input frequency to trap position
 avgptcutoff = desired_trap_bw * 0.5; % This basically determines how short an event can be for taking an extension change.
-avplotfact = 20; % 'Downsampling' factor for plotting. different from the bandwidth the data is analyzed at. this is only for plotting.
 
 Cy3 = [0 0.7 0]; % Green color
 
@@ -152,7 +142,6 @@ for ii = DSetsToAnalyze
     calfilename = ['cal' calrootfile(1:(end-4))];
     
     % If the calibration is already in memory, don't have to redo
-    beaddiameters = [950 880];
     if ~exist(calfilename, 'var') % Then do calibration
         CalibrateStrippedWrapper(Date, calrootfile, 0, 0);
     end
