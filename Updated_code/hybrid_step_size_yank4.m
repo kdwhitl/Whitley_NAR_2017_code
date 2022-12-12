@@ -275,9 +275,7 @@ for ii = DSetsToAnalyze
             dext(ppp+1,:) = downsample(PDiff(ppp+1,:), TrapAveFactor); % Each row in dext is now change in extension with a different offset subtracted.
         end
     end
-    
-    clear APos BPos PDiff data % Save memory
-    
+
     avgF = (Aforce(1,:)-Bforce(1,:))/2;
     
 %% Downsample trap data
@@ -1010,13 +1008,10 @@ end
         end
         end
     end
-    clear dext Aforce Bforce % Save memory
-    
+
     AllResults.unbinding = [AllResults.unbinding; alldeltaextunbind];
     AllResults.lifetimes = [AllResults.lifetimes; lifetimes];
 
 end
 
-% Save some RAM by clearing out temp variables
-clear alldeltaextbind alldeltaextunbind
 toc

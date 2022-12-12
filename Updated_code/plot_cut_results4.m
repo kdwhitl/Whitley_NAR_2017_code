@@ -127,9 +127,6 @@ if cut_tether_noise
     Data_Unbinding =        cutmat(Data_Unbinding, 7, unbnoisecut);
 end
 
-Data_Binding =          cutmat(Data_Binding,10,bkappaAcut);
-Data_Unbinding =        cutmat(Data_Unbinding,11,ubkappaAcut);
-
 % Cut on time of event in time trace
 if 0
     teventcut = [0 500];
